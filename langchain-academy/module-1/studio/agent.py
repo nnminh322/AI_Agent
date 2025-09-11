@@ -38,8 +38,8 @@ def divide(a: int, b: int) -> float:
 tools = [add, multiply, divide]
 
 # Define LLM with bound tools
-llm = ChatOpenAI(
-    model="openai/o4-mini",
+llm = llm = ChatOpenAI(
+    model="openai/gpt-4o",
     api_key="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",
     base_url="https://models.github.ai/inference",
 )

@@ -2,6 +2,9 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
+import os
+
+# os.environ["LANGSMITH_API_KEY"] = "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"
 
 # Tool
 def multiply(a: int, b: int) -> int:
@@ -14,8 +17,8 @@ def multiply(a: int, b: int) -> int:
     return a * b
 
 # LLM with bound tool
-llm = ChatOpenAI(
-    model="openai/o4-mini",
+llm = llm = ChatOpenAI(
+    model="openai/gpt-4o",
     api_key="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",
     base_url="https://models.github.ai/inference",
 )
