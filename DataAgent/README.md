@@ -1,0 +1,1 @@
+copyright &copy; nnminh322@gmail.com

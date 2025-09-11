@@ -1,0 +1,120 @@
+-- Làm sạch + tạo schema + set search_path
+DROP SCHEMA IF EXISTS olist CASCADE;
+CREATE SCHEMA olist;
+SET search_path TO olist, public;
+
+-- GELOCATION: bắt buộc zip prefix phải duy nhất (PK)
+CREATE TABLE olist_geolocation (
+    geolocation_id BIGSERIAL PRIMARY KEY,
+    geolocation_zip_code_prefix VARCHAR(10) NOT NULL,
+    geolocation_lat DOUBLE PRECISION,
+    geolocation_lng DOUBLE PRECISION,
+    geolocation_city VARCHAR(100),
+    geolocation_state VARCHAR(2)
+);
+
+-- CUSTOMERS
+CREATE TABLE olist_customers (
+    customer_id VARCHAR(50) PRIMARY KEY,
+    customer_unique_id VARCHAR(50) NOT NULL,
+    customer_zip_code_prefix VARCHAR(10) NOT NULL,
+    customer_city VARCHAR(100),
+    customer_state VARCHAR(2),
+    CONSTRAINT fk_customers_zip
+      FOREIGN KEY (customer_zip_code_prefix)
+      REFERENCES olist_geolocation(geolocation_zip_code_prefix)
+);
+
+-- SELLERS
+CREATE TABLE olist_sellers (
+    seller_id VARCHAR(50) PRIMARY KEY,
+    seller_zip_code_prefix VARCHAR(10) NOT NULL,
+    seller_city VARCHAR(100),
+    seller_state VARCHAR(2),
+    CONSTRAINT fk_sellers_zip
+      FOREIGN KEY (seller_zip_code_prefix)
+      REFERENCES olist_geolocation(geolocation_zip_code_prefix)
+);
+
+-- PRODUCTS
+CREATE TABLE olist_products (
+    product_id VARCHAR(50) PRIMARY KEY,
+    product_category_name VARCHAR(100),
+    product_name_length INTEGER,
+    product_description_length INTEGER,
+    product_photos_qty INTEGER,
+    product_weight_g INTEGER,
+    product_length_cm INTEGER,
+    product_height_cm INTEGER,
+    product_width_cm INTEGER
+);
+
+-- ORDERS
+CREATE TABLE olist_orders (
+    order_id VARCHAR(50) PRIMARY KEY,
+    customer_id VARCHAR(50) NOT NULL,
+    order_status VARCHAR(20),
+    order_purchase_timestamp TIMESTAMPTZ,
+    order_approved_at TIMESTAMPTZ,
+    order_delivered_carrier_date TIMESTAMPTZ,
+    order_delivered_customer_date TIMESTAMPTZ,
+    order_estimated_delivery_date TIMESTAMPTZ,
+    CONSTRAINT fk_orders_customer
+      FOREIGN KEY (customer_id) REFERENCES olist_customers(customer_id)
+);
+
+-- ORDER PAYMENTS
+CREATE TABLE olist_order_payments (
+    order_id VARCHAR(50) NOT NULL,
+    payment_sequential INTEGER NOT NULL,
+    payment_type VARCHAR(20),
+    payment_installments INTEGER,
+    payment_value NUMERIC(10, 2),
+    PRIMARY KEY (order_id, payment_sequential),
+    CONSTRAINT fk_payments_order
+      FOREIGN KEY (order_id) REFERENCES olist_orders(order_id) ON DELETE CASCADE
+);
+
+-- ORDER REVIEWS
+CREATE TABLE olist_order_reviews (
+    id BIGSERIAL PRIMARY KEY,
+    review_id VARCHAR(50),
+    order_id VARCHAR(50) NOT NULL,
+    review_score INTEGER,
+    review_comment_title VARCHAR(255),
+    review_comment_message TEXT,
+    review_creation_date TIMESTAMPTZ,
+    review_answer_timestamp TIMESTAMPTZ
+);
+
+-- ORDER ITEMS
+CREATE TABLE olist_order_items (
+    order_id VARCHAR(50) NOT NULL,
+    order_item_id INTEGER NOT NULL,
+    product_id VARCHAR(50) NOT NULL,
+    seller_id VARCHAR(50) NOT NULL,
+    shipping_limit_date TIMESTAMPTZ,
+    price NUMERIC(10, 2),
+    freight_value NUMERIC(10, 2),
+    PRIMARY KEY (order_id, order_item_id),
+    CONSTRAINT fk_items_order
+      FOREIGN KEY (order_id) REFERENCES olist_orders(order_id) ON DELETE CASCADE,
+    CONSTRAINT fk_items_product
+      FOREIGN KEY (product_id) REFERENCES olist_products(product_id),
+    CONSTRAINT fk_items_seller
+      FOREIGN KEY (seller_id) REFERENCES olist_sellers(seller_id)
+);
+
+-- TRANSLATION (đồng bộ prefix tên bảng nếu muốn)
+CREATE TABLE olist_product_category_translation (
+    product_category_name VARCHAR(100) PRIMARY KEY,
+    product_category_name_english VARCHAR(100)
+);
+
+-- Khuyến nghị index cho các cột FK (tăng tốc join/validate)
+CREATE INDEX idx_customers_zip   ON olist_customers(customer_zip_code_prefix);
+CREATE INDEX idx_sellers_zip     ON olist_sellers(seller_zip_code_prefix);
+CREATE INDEX idx_orders_customer ON olist_orders(customer_id);
+CREATE INDEX idx_items_order     ON olist_order_items(order_id);
+CREATE INDEX idx_items_product   ON olist_order_items(product_id);
+CREATE INDEX idx_items_seller    ON olist_order_items(seller_id);
