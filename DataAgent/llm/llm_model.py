@@ -8,7 +8,6 @@ class LLM_standard_OpenAI_API:
             api_key="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",
             base_url="https://models.github.ai/inference",
         )
-    
     def get_llm(self):
         return self.llm
     
