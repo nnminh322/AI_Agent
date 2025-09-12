@@ -1,8 +1,9 @@
 import psycopg2
 import yaml
 from typing import Optional, Tuple
+from agents.state import MessageState
 
-with open("../configs/config.yaml", "r") as f:
+with open("./configs/config.yaml", "r") as f:
     postgres_config = yaml.safe_load(f)
 conn_params = postgres_config["postgres_config"]
 
@@ -44,11 +45,8 @@ def query_sql(sql_statement: str, commit: bool = False):
             connection.close()
 
 
-# def main():
-#     print("test sql execute function")
-#     query = "SELECT * from olist.olist_customers oc "
-#     results = query_sql(sql_statement=query)
-#     print(type(results))
+def sql_query_tool(state: MessageState) -> MessageState:
+    pass
 
-# if __name__ == "__main__":
-#     main()
+def sql_verify_tool(state: MessageState) -> MessageState:
+    pass
