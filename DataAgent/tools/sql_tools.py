@@ -37,7 +37,7 @@ def query_sql(sql_statement: str, commit: bool = False):
     except Exception as e:
         print(f"Error executing SQL: {e}")
         connection.rollback()
-        return None
+        return e
     finally:
         if cursor:
             cursor.close()

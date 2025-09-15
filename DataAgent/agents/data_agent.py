@@ -5,23 +5,23 @@ from tools.analysis_tool import analysis_data_tool
 from tools.viz_tool import show_data_tool, show_visualize_tool
 from llm.llm_model import LLM_standard_OpenAI_API
 
-class DataAgent:
-    def __init__(self):
-        builder = StateGraph(MessageState)
-        builder.add_node("gen_sql", gen_sql)
-        builder.add_node("run_sql", run_sql)
-        builder.add_node("verify", verify)
-        builder.add_node("analyze", analyze)
-        builder.add_node("show", show)
+# class DataAgent:
+#     def __init__(self):
+#         builder = StateGraph(MessageState)
+#         builder.add_node("gen_sql", gen_sql)
+#         builder.add_node("run_sql", run_sql)
+#         builder.add_node("verify", verify)
+#         builder.add_node("analyze", analyze)
+#         builder.add_node("show", show)
 
-        builder.add_edge(START, "gen_sql")
-        builder.add_edge("gen_sql", "run_sql")
-        builder.add_edge("run_sql", "verify")
-        builder.add_conditional_edges("verify", should_continue, {"gen_sql": "gen_sql", "analyze": "analyze"})
-        builder.add_edge("analyze", "show")
-        builder.add_edge("show", END)
+#         builder.add_edge(START, "gen_sql")
+#         builder.add_edge("gen_sql", "run_sql")
+#         builder.add_edge("run_sql", "verify")
+#         builder.add_conditional_edges("verify", should_continue, {"gen_sql": "gen_sql", "analyze": "analyze"})
+#         builder.add_edge("analyze", "show")
+#         builder.add_edge("show", END)
 
-        self.graph = builder.compile()
+#         self.graph = builder.compile()
 
-    def invoke(self, question: str):
-        return self.graph.invoke({"question": question, "messages": []})
+#     def invoke(self, question: str):
+#         return self.graph.invoke({"question": question, "messages": []})
