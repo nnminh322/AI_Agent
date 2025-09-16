@@ -4,9 +4,8 @@ from typing import Optional, Tuple
 from agents.state import MessageState
 
 with open("./configs/config.yaml", "r") as f:
-    postgres_config = yaml.safe_load(f)
-conn_params = postgres_config["postgres_config"]
-
+    config = yaml.safe_load(f)
+conn_params = config["postgres_config"]
 
 def get_connection_and_cursor() -> (
     Optional[Tuple[psycopg2.extensions.connection, psycopg2.extensions.cursor]]
@@ -17,13 +16,13 @@ def get_connection_and_cursor() -> (
         return connection, cursor
     except Exception as e:
         print(f"Error connection: {e}")
-        return None, None
+        return e, None
 
 
 def query_sql(sql_statement: str, commit: bool = False):
     connection, cursor = get_connection_and_cursor()
     if not cursor:
-        return None
+        return connection
     try:
         cursor.execute(sql_statement)
         if cursor.description:

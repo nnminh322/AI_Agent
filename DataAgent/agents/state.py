@@ -11,6 +11,7 @@ class SQLError(TypedDict, total=False):
 class MessageState(TypedDict):
     SQL_format: Literal['postgres', 'mssql', 'mysql']
     question: str
+    system_msg: Optional[str]
     db_description: str
     chat_history: List[Dict[str,str]]
     SQL_statement: Optional[str]
