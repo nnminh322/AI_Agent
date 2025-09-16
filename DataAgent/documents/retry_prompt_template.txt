@@ -1,0 +1,3 @@
+QUAN TRỌNG: ĐÂY LÀ LẦN THỬ LẠI ({state['SQL_num_retry']})
+Truy vấn trước đó thất bại với lỗi: {state['SQL_error_results']}
+Hãy phân tích kỹ lỗi và tạo truy vấn mới khắc phục vấn đề này."""

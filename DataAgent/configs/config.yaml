@@ -12,4 +12,5 @@ llm:
     base_url: "https://models.github.ai/inference"
 
 database:
+  num_retry: 3
   DIALECT: "postgres"
