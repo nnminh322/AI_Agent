@@ -13,3 +13,7 @@ def sql_query_node(state: MessageState) -> MessageState:
         state["SQL_data_results"] = result_query
         
     return state
+
+def sql_verify(state: MessageState) -> MessageState:
+    if state["SQL_num_retry"] == 3:
+        pass
