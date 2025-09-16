@@ -1,4 +1,4 @@
-from nodes.context_node import context_node
+from node_and_edge.context_node import context_node
 from agents.state import MessageState
 from tools.sql_tools import query_sql
 from llm.llm_model import LLM_standard_OpenAI_API
