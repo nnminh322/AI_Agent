@@ -1,0 +1,13 @@
+from fastapi import FastAPI, HTTPException
+from fastapi.security import HTTPBasic
+from loguru import logger
+from functional import chat_sql
+
+app = FastAPI()
+
+
+@app.post("/chat")
+async def chat(text: str):
+    logger.info(f"User: {text}")
+    response = chat_sql(question=text)
+    return {"response": response}
