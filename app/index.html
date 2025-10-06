@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a202c; }
+        ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #718096; }
+        .dataframe-container {
+            max-height: 500px;
+            overflow: auto;
+            border-radius: 0.5rem;
+            border: 1px solid #4a5568;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 font-sans flex flex-col h-screen">
+
+    <header class="bg-gray-800 border-b border-gray-700 p-4 shadow-md">
+        <h1 class="text-xl font-bold text-center">AI Chat SQL</h1>
+    </header>
+
+    <main id="chat-container" class="flex-1 p-6 overflow-y-auto space-y-6">
+        <div class="flex items-start gap-3">
+            <div class="bg-blue-600 text-white p-2 rounded-full h-8 w-8 flex items-center justify-center font-bold text-xs flex-shrink-0">AI</div>
+            <div class="bg-gray-700 rounded-lg p-3 max-w-lg">
+                <p>Xin chào! Tôi đã sẵn sàng để truy vấn và hiển thị dữ liệu cho bạn.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 border-t border-gray-700 p-4">
+        <form id="chat-form" class="flex items-center space-x-4 max-w-4xl mx-auto">
+            <input 
+                type="text" 
+                id="message-input" 
+                placeholder="Nhập câu hỏi của bạn ở đây..." 
+                class="flex-1 bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                autocomplete="off">
+            <button 
+                type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-lg transition duration-300 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                <span>Gửi</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </form>
+    </footer>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const submitButton = chatForm.querySelector('button');
+
+        const addTextMessage = (message, sender) => {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = 'flex items-start gap-3';
+            
+            if (sender === 'user') {
+                messageWrapper.classList.add('justify-end');
+                messageWrapper.innerHTML = `
+                    <div class="bg-blue-600 rounded-lg p-3 max-w-lg order-1"><p>${message}</p></div>
+                    <div class="bg-gray-600 text-white p-2 rounded-full h-8 w-8 flex items-center justify-center font-bold text-xs flex-shrink-0 order-2">You</div>
+                `;
+            } else {
+                messageWrapper.innerHTML = `
+                    <div class="bg-blue-600 text-white p-2 rounded-full h-8 w-8 flex items-center justify-center font-bold text-xs flex-shrink-0">AI</div>
+                    <div class="bg-gray-700 rounded-lg p-3 max-w-xl"><p class="whitespace-pre-wrap">${message}</p></div>
+                `;
+            }
+            chatContainer.appendChild(messageWrapper);
+        };
+
+        const formatCell = (cell) => {
+            if (cell === null || cell === undefined) return '<span class="text-gray-500">N/A</span>';
+            if (!isNaN(cell) && cell !== '') {
+                const num = Number(cell);
+                 return num % 1 === 0 ? num.toLocaleString('vi-VN') : num.toLocaleString('vi-VN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            if (typeof cell === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(cell)) {
+                try {
+                    const date = new Date(cell);
+                    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                } catch (e) {}
+            }
+            return cell;
+        };
+
+        const addTableMessage = (tableObject) => {
+            const { headers, rows } = tableObject; 
+            if (!rows || rows.length === 0) {
+                addTextMessage("Truy vấn thành công nhưng không có dữ liệu để hiển thị.", 'bot');
+                return;
+            }
+            const tableHead = `
+                <thead class="bg-gray-700 sticky top-0 z-10">
+                    <tr>
+                        ${headers.map(header => `<th class="p-3 text-sm font-semibold text-left tracking-wide">${header.replace(/_/g, ' ')}</th>`).join('')}
+                    </tr>
+                </thead>
+            `;
+            const tableBody = `
+                <tbody class="divide-y divide-gray-600">
+                    ${rows.map(row => `
+                        <tr class="hover:bg-gray-700 transition">
+                            ${row.map(cell => `<td class="p-3 text-sm text-gray-300 whitespace-nowrap">${formatCell(cell)}</td>`).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            const tableHtml = `
+                <div class="dataframe-container">
+                    <table class="w-full text-sm">
+                        ${tableHead}
+                        ${tableBody}
+                    </table>
+                </div>
+            `;
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = 'flex items-start gap-3';
+            messageWrapper.innerHTML = `
+                <div class="bg-blue-600 text-white p-2 rounded-full h-8 w-8 flex items-center justify-center font-bold text-xs flex-shrink-0">AI</div>
+                <div class="bg-gray-800 rounded-lg p-1 max-w-full lg:max-w-5xl w-full">
+                    ${tableHtml}
+                </div>
+            `;
+            chatContainer.appendChild(messageWrapper);
+        };
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userInput = messageInput.value.trim();
+            if (!userInput) return;
+            addTextMessage(userInput, 'user');
+            messageInput.value = '';
+            submitButton.disabled = true;
+            
+            try {
+                const response = await fetch(`/chat?text=${encodeURIComponent(userInput)}`, { method: 'POST' });
+                if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
+                const data = await response.json();
+                
+                // === LOGIC PHÂN LOẠI ĐÃ SỬA LẠI HOÀN CHỈNH ===
+                const responsePayload = data.response;
+
+                // Kiểm tra xem bên trong có object "results" chứa "headers" và "rows" không
+                if (responsePayload && responsePayload.headers && Array.isArray(responsePayload.rows)) {
+                    // Nếu có, đây chính là dữ liệu bảng
+                    addTableMessage(responsePayload);
+                } else {
+                    // Nếu không, coi nó là text hoặc lỗi và hiển thị
+                    addTextMessage(String(responsePayload), 'bot');
+                }
+
+            } catch (error) {
+                console.error('Lỗi khi gọi API:', error);
+                addTextMessage('Xin lỗi, đã có lỗi xảy ra. Vui lòng kiểm tra log ở server.', 'bot');
+            } finally {
+                 submitButton.disabled = false;
+                 messageInput.focus();
+                 chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
+

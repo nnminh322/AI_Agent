@@ -12,5 +12,5 @@ llm:
     base_url: "base_url"
 
 database:
-  num_retry: 3
+  num_retry: 5
   DIALECT: "postgres"

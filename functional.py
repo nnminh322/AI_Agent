@@ -36,4 +36,4 @@ def chat_sql(question: str):
         out_state = app.invoke(state)
     except Exception as e:
         return {"error": str(e)}
-    return {"results": out_state}
+    return {"results": out_state["SQL_data_results"]}

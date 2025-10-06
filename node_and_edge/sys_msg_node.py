@@ -8,10 +8,10 @@ n_retry_max = db_config["num_retry"]
 dialect = db_config["DIALECT"]
 
 
-with open("./documents/base_prompt_template.txt", "r") as f:
+with open("./documents/base_prompt_template.txt", "r", encoding="utf-8") as f:
     base_prompt = f.read()
 
-with open("./documents/retry_prompt_template.txt") as f:
+with open("./documents/retry_prompt_template.txt", encoding="utf-8") as f:
     retry_prompt = f.read()
 
 
