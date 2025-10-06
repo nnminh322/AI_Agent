@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.security import HTTPBasic
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from loguru import logger
 from functional import chat_sql
 
