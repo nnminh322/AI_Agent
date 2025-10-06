@@ -41,7 +41,6 @@ async def chat(text: str):
     """
     logger.info(f"User: {text}")
     response = chat_sql(question=text)
-    print(response)
     return {"response": response["results"]}
 
 
