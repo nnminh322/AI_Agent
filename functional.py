@@ -33,7 +33,7 @@ def chat_sql(question: str):
     state = MessageState()
     state["question"] = question
     try:
-        out_state = app.invoke(state, config={"recursion_limit": 100})
+        out_state = app.invoke(state)
     except Exception as e:
         return {"error": str(e)}
     return {"results": out_state["SQL_data_results"]}
