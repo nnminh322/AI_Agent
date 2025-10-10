@@ -1,8 +1,17 @@
 version: "3.9"
 
 services:
-  postgres:
-    image: postgres
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent_app
+    volumes:
+      - ./configs/config_container.yaml:/app/configs/config.yaml
+    depends_on:
+      - db
+  db:
+    image: postgres:18
     container_name: agent_db
     ports:
       - "5432:5432"
@@ -11,4 +20,5 @@ services:
       POSTGRES_PASSWORD: dbagent
       POSTGRES_DB: postgres
     volumes:
-      - ./data_source:/import
+      - ./database/data_source:/import
+      - ./database/init:/docker-entrypoint-initdb.d  
