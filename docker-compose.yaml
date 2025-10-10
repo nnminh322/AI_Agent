@@ -1,7 +1,13 @@
 version: "3.9"
 
+networks:
+  public: {}
+  private:
+    internal: true
+
 services:
   app:
+    image: ai_agent_app:1.0
     build:
       context: ./src
       dockerfile: Dockerfile
@@ -14,15 +20,20 @@ services:
       - ./src/.env
     ports:
       - 8080:8080
+    networks:
+      - private
+      - public
   db:
-    image: pgvector/pgvector:pg16
+    image: postgres:18
     container_name: agent_db
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: dbagent
       POSTGRES_DB: postgres
     volumes:
       - ./database/data_source:/import
-      - ./database/init:/docker-entrypoint-initdb.d  
+      - ./database/init:/docker-entrypoint-initdb.d 
+    networks:
+      - private
