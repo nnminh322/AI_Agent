@@ -1,4 +1,4 @@
-psycopg2
+psycopg2-binary
 pyyaml
 regex
 tiktoken
@@ -7,3 +7,5 @@ langchain_core
 langchain_openai
 langgraph
 uvicorn
+fastapi
+loguru

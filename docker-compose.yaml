@@ -3,15 +3,19 @@ version: "3.9"
 services:
   app:
     build:
-      context: .
+      context: ./src
       dockerfile: Dockerfile
     container_name: agent_app
     volumes:
-      - ./configs/config_container.yaml:/app/configs/config.yaml
+      - ./src/configs/config_container.yaml:/app/configs/config.yaml
     depends_on:
       - db
+    env_file:
+      - ./src/.env
+    ports:
+      - 8080:8080
   db:
-    image: postgres:18
+    image: pgvector/pgvector:pg16
     container_name: agent_db
     ports:
       - "5432:5432"
