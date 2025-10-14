@@ -1,23 +1,12 @@
-FROM python:3.12-slim AS base-image
+FROM python:3.12-slim
 
-ENV VIRTUAL_VENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_VENV
-ENV PATH="$VIRTUAL_VENV/bin:$PATH"
+WORKDIR /app
 
 COPY requirements.txt .  
 
 RUN pip install -r requirements.txt --no-cache-dir
 
-
-FROM python:3.12-slim AS runtime-image
-
-COPY --from=base-image /opt/venv /opt/venv 
-
-WORKDIR /app
-
 COPY . .
-
-ENV PATH="/opt/venv/bin:$PATH"
 
 EXPOSE 8080
 
