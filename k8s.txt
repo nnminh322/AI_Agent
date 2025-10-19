@@ -1,0 +1,8 @@
+minikube stop
+minikube start --cpus=4 --memory=6g
+minikube addons enable dashboard
+# mở UI (cách 1)
+minikube dashboard --url
+# hoặc (cách 2) port-forward
+minikube kubectl -- -n kubernetes-dashboard port-forward svc/kubernetes-dashboard 9090:80
+# truy cập: http://127.0.0.1:9090
