@@ -1,8 +1,41 @@
-minikube stop
-minikube start --cpus=4 --memory=6g
-minikube addons enable dashboard
-# mở UI (cách 1)
-minikube dashboard --url
-# hoặc (cách 2) port-forward
-minikube kubectl -- -n kubernetes-dashboard port-forward svc/kubernetes-dashboard 9090:80
-# truy cập: http://127.0.0.1:9090
+version: "3.8"
+
+networks:
+  public: {}
+  private:
+    internal: true
+
+services:
+  app:
+    image: ai_agent_app:1.0
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: agent_app
+    volumes:
+      - ./src/configs/config_container.yaml:/app/configs/config.yaml
+    depends_on:
+      - db
+    env_file:
+      - ./src/.env
+    ports:
+      - 8080:8080
+    networks:
+      - private
+      - public
+  db:
+    image: postgres:18
+    container_name: agent_db
+    # ports:
+    #   - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dbagent
+      POSTGRES_DB: postgres
+    volumes:
+      - ./database/data_source:/import
+      - ./database/init:/docker-entrypoint-initdb.d 
+    networks:
+      - private
+    deploy:
+      replicas: 2
