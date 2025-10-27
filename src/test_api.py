@@ -34,6 +34,7 @@ async def favicon():
         return FileResponse(favicon_path)
     return FileResponse(None, status_code=404)
 
+
 @app.post("/chat")
 async def chat(text: str):
     """
