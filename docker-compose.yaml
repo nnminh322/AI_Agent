@@ -19,7 +19,7 @@ services:
     env_file:
       - ./src/.env
     ports:
-      - 8080:8080
+      - 8000:8000
     networks:
       - private
       - public
@@ -37,21 +37,21 @@ services:
       - ./database/init:/docker-entrypoint-initdb.d 
     networks:
       - private
-    deploy:
-      replicas: 2
-  minio:
-    image: minio/minio
-    container_name: minio
-    hostname: minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_storage:/data
-    environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: 12345678
-    command: server --console-address ":9001" /data
+    # deploy:
+    #   replicas: 2
+#   minio:
+#     image: minio/minio
+#     container_name: minio
+#     hostname: minio
+#     ports:
+#       - "9000:9000"
+#       - "9001:9001"
+#     volumes:
+#       - minio_storage:/data
+#     environment:
+#       MINIO_ACCESS_KEY: minio
+#       MINIO_SECRET_KEY: 12345678
+#     command: server --console-address ":9001" /data
 
-volumes:
-  minio_storage:
+# volumes:
+#   minio_storage:

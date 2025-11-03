@@ -19,7 +19,7 @@ services:
     env_file:
       - ./src/.env
     ports:
-      - 8080:8080
+      - 6666:6666
     networks:
       - private
       - public
