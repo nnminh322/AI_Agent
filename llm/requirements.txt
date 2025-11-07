@@ -1,0 +1,5 @@
+uv
+fastapi=0.121.0
+loguru=0.7.3
+pyyaml=6.0.3
+# vllm

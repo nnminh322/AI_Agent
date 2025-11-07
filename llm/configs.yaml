@@ -1,0 +1,10 @@
+#llm/configs.yaml
+llm:
+  # mode: host
+  model_name: "arcee-ai/Arcee-VyLinh"
+  temperature: 0.85
+  top_p: 0.95
+  max_tokens: 512
+
+resource:
+  gpu_memory_utilization: 0.8
