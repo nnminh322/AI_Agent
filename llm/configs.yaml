@@ -1,7 +1,7 @@
 #llm/configs.yaml
 llm:
   # mode: host
-  model_name: "arcee-ai/Arcee-VyLinh"
+  model: "arcee-ai/Arcee-VyLinh"
   temperature: 0.85
   top_p: 0.95
   max_tokens: 512
