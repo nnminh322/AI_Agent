@@ -15,7 +15,7 @@ _sampling = SamplingParams(
 class LocalLLM:
     def __init__(self):
         self.engine = VLLM(
-            model=config_llm["llm"]["model_name"],
+            model=config_llm["llm"]["model"],
             gpu_memory_utilization=config_llm["resource"]["gpu_memory_utilization"],
         )
 
