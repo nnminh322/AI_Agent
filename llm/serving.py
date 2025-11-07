@@ -24,7 +24,7 @@ llm_model: LocalLLM | None = None
 
 @app.on_event("startup")
 def _startup():
-    global llm
+    global llm_model
     llm_model = LocalLLM()
     logger.info("LLM engine loaded")
 
