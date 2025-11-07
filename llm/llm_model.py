@@ -9,7 +9,7 @@ with open("./configs.yaml", "r") as f:
 _sampling = SamplingParams(
     temperature=config_llm["llm"]["temperature"],
     top_p=config_llm["llm"]["top_p"],
-    max_tokens=config_llm["llm"].get("max_tokens")
+    max_tokens=config_llm["llm"][""]
 )
 
 class LocalLLM:
@@ -17,8 +17,6 @@ class LocalLLM:
         self.engine = VLLM(
             model_name=config_llm["llm"]["model_name"],
             gpu_memory_utilization=config_llm["resource"]["gpu_memory_utilization"],
-            temperature=config_llm["llm"]["temperature"],
-            top_p=config_llm["llm"]["top_p"],
         )
 
     def generate(self, prompts: list[str]) -> list[str]:
