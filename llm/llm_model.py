@@ -9,7 +9,7 @@ with open("./configs.yaml", "r") as f:
 _sampling = SamplingParams(
     temperature=config_llm["llm"]["temperature"],
     top_p=config_llm["llm"]["top_p"],
-    max_tokens=config_llm["llm"][""]
+    max_tokens=config_llm["llm"]["max_tokens"]
 )
 
 class LocalLLM:
