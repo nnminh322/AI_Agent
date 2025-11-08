@@ -37,9 +37,8 @@ def health():
 @app.post("/chat")
 async def chat(req: ChatRequest):
     try:
-        
         ps = [req.prompts] if isinstance(req.prompts, str) else req.prompts
-        texts = llm_model.generate(ps)
+        texts = await llm_model.generate(ps)
         logger.info(f"User: {req}")
         return {"responses": texts}
     except Exception as e:

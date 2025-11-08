@@ -5,6 +5,12 @@ llm:
   temperature: 0.85
   top_p: 0.95
   max_tokens: 512
-
+  tensor_parallel_size: 1
+  max_model_len: 4096
+  dtype: "half"
+  
 resource:
   gpu_memory_utilization: 0.8
+  port: 8000
+  host: "0.0.0.0"
+  swap_space: 16
