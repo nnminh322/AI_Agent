@@ -27,28 +27,35 @@ class LocalLLM:
         self.engine = AsyncLLMEngine.from_engine_args(_engine_args)
 
     async def generate(self, prompts: list[str]) -> list[str]:
-        request_id = random_uuid()
-        results_generators = self.engine.generate(
-            prompts,
-            _sampling,  # sampling_params đứng thứ hai
-            request_id  # request_id đứng thứ ba
-        )
-        final_output = []
-        try:
-            async for response_output in results_generators:
-                final_output.append(response_output)
-        except Exception as e:
-            logger.exception(f"Lỗi trong quá trình generate của vLLM: {e}")
-            raise e
+        if isinstance(prompts, str):
+            prompts = [prompts]
+        
+        texts: list[str] = []
+        
+        for prompt in prompts:
+            request_id = random_uuid()
+            results_generators = self.engine.generate(
+                prompt,
+                _sampling,  # sampling_params đứng thứ hai
+                request_id  # request_id đứng thứ ba
+            )
+            final_output = []
+            try:
+                async for response_output in results_generators:
+                    final_output.append(response_output)
+            except Exception as e:
+                logger.exception(f"Lỗi trong quá trình generate của vLLM: {e}")
+                raise e
 
-        texts = []
+            if final_output:
+                out = final_output[-1]  
+                if out.outputs and not out.finished:
+                    logger.warning(f"Request {out.request_id} finished incomplete: {out.outputs[0].finish_reason}")
 
-        for out in final_output:
-            if out.outputs and not out.finished:
-                 logger.warning(f"Request {out.request_id} finished incomplete: {out.outputs[0].finish_reason}")
-
-            if out.outputs:
-                texts.append(out.outputs[0].text)
+                if out.outputs:
+                    texts.append(out.outputs[0].text)
+                else:
+                    texts.append("")
             else:
                 texts.append("")
 
