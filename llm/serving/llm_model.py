@@ -27,7 +27,12 @@ class LocalLLM:
         self.engine = AsyncLLMEngine.from_engine_args(_engine_args)
 
     async def generate(self, prompts: list[str]) -> list[str]:
-        results_generators = self.engine.generate(prompts, random_uuid(), _sampling)
+        request_id = random_uuid()
+        results_generators = self.engine.generate(
+            prompts,
+            _sampling,  # sampling_params đứng thứ hai
+            request_id  # request_id đứng thứ ba
+        )
         final_output = []
         try:
             async for response_output in results_generators:
@@ -41,7 +46,7 @@ class LocalLLM:
         for out in final_output:
             if out.outputs and not out.finished:
                  logger.warning(f"Request {out.request_id} finished incomplete: {out.outputs[0].finish_reason}")
-                 
+
             if out.outputs:
                 texts.append(out.outputs[0].text)
             else:
