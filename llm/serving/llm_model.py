@@ -19,6 +19,10 @@ _sampling = SamplingParams(
 _engine_args = AsyncEngineArgs(
     model=config_llm["llm"]["model"],
     gpu_memory_utilization=config_llm["resource"]["gpu_memory_utilization"],
+    model=config_llm["model"],
+    tensor_parallel_size=config_llm["tensor_parallel_size"],
+    dtype=config_llm["dtype"],
+    max_model_len=config_llm["max_model_len"],
 )
 
 
