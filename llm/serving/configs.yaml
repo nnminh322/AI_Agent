@@ -1,7 +1,7 @@
 #llm/configs.yaml
 llm:
   # mode: host
-  model: "Qwen/Qwen3-VL-8B-Instruct"
+  model: "Qwen/Qwen3-8B"
   temperature: 0.85
   top_p: 0.95
   max_tokens: 512
