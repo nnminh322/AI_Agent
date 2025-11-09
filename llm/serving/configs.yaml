@@ -1,7 +1,7 @@
 #llm/configs.yaml
 llm:
   # mode: host
-  model: "arcee-ai/Arcee-VyLinh"
+  model: "Qwen/Qwen3-VL-8B-Instruct"
   temperature: 0.85
   top_p: 0.95
   max_tokens: 512
