@@ -1,8 +1,9 @@
 # llm/serving
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from llm_model import LocalLLM
 from loguru import logger
+from typing import Annotated
 
 app = FastAPI(
     title="LLM Block",
@@ -35,11 +36,13 @@ def health():
 
 
 @app.post("/chat")
-async def chat(req: ChatRequest):
+async def chat(
+    req: ChatRequest, api_key: Annotated[str, Header(..., alias="X-API-Key")]
+):
+    logger.info(f"Hihi có thằng vừa gọi request")
     try:
-        
         ps = [req.prompts] if isinstance(req.prompts, str) else req.prompts
-        texts = llm_model.generate(ps)
+        texts = await llm_model.generate(ps)
         logger.info(f"User: {req}")
         return {"responses": texts}
     except Exception as e:
