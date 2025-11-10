@@ -32,8 +32,12 @@ app = graph.compile()
 def chat_sql(question: str):
     state = MessageState()
     state["question"] = question
+    print(f"first: {state}")
     try:
         out_state = app.invoke(state)
+        print(f"first: {state}")
+        print(f"second: {out_state}")
+        
     except Exception as e:
         return {"error": str(e)}
     return {"results": out_state["SQL_data_results"]}
