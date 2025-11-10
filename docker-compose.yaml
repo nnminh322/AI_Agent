@@ -6,6 +6,22 @@ networks:
     internal: true
 
 services:
+
+  db:
+    image: postgres:18
+    container_name: agent_db
+    # ports:
+    #   - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dbagent
+      POSTGRES_DB: postgres
+    volumes:
+      - ./database/data_source:/import
+      - ./database/init:/docker-entrypoint-initdb.d 
+    networks:
+      - private
+
   app:
     image: ai_agent_app:1.0
     build:
@@ -23,35 +39,3 @@ services:
     networks:
       - private
       - public
-  db:
-    image: postgres:18
-    container_name: agent_db
-    # ports:
-    #   - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: dbagent
-      POSTGRES_DB: postgres
-    volumes:
-      - ./database/data_source:/import
-      - ./database/init:/docker-entrypoint-initdb.d 
-    networks:
-      - private
-    # deploy:
-    #   replicas: 2
-#   minio:
-#     image: minio/minio
-#     container_name: minio
-#     hostname: minio
-#     ports:
-#       - "9000:9000"
-#       - "9001:9001"
-#     volumes:
-#       - minio_storage:/data
-#     environment:
-#       MINIO_ACCESS_KEY: minio
-#       MINIO_SECRET_KEY: 12345678
-#     command: server --console-address ":9001" /data
-
-# volumes:
-#   minio_storage:
